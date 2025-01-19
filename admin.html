@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Administração</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Admin - Ecos Literários</h1>
+    </header>
+
+    <main>
+        <section>
+            <h2>Adicionar Novo Texto</h2>
+            <form id="form-adicionar-texto">
+                <label for="titulo">Título:</label>
+                <input type="text" id="titulo" name="titulo" required>
+
+                <label for="conteudo">Conteúdo:</label>
+                <textarea id="conteudo" name="conteudo" required></textarea>
+
+                <button type="submit">Enviar</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 - Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        // Função para salvar os textos no localStorage
+        function salvarTexto(titulo, conteudo) {
+            const textos = JSON.parse(localStorage.getItem('textos')) || [];
+            const novoTexto = {
+                id: textos.length + 1,
+                titulo,
+                conteudo
+            };
+            textos.push(novoTexto);
+            localStorage.setItem('textos', JSON.stringify(textos));
+        }
+
+        // Função para tratar o envio do formulário
+        document.getElementById('form-adicionar-texto').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const titulo = document.getElementById('titulo').value;
+            const conteudo = document.getElementById('conteudo').value;
+
+            // Salvar no localStorage
+            salvarTexto(titulo, conteudo);
+
+            // Limpar o formulário
+            document.getElementById('titulo').value = '';
+            document.getElementById('conteudo').value = '';
+            alert('Texto enviado com sucesso!');
+        });
+    </script>
+</body>
+</html>

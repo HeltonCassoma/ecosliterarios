@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escritor - Página Oficial</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Ecos Literários</h1>
+        <nav>
+            <ul>
+                <li><a href="/index.html">Textos</a></li>
+                <li><a href="/biografia.html">Biografia</a></li>
+                <li><a href="/contato.html">Contato</a></li>
+                <li><a href="/admin.html">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="textos">
+            <h2>Textos</h2>
+            <!-- Os artigos serão inseridos aqui pelo JavaScript -->
+        </section>
+    </main>
+
+    <footer id="contato">
+        <h2>Receba meus textos</h2>
+        <form action="#" method="post">
+            <label for="email">Digite seu email:</label>
+            <input type="email" id="email" name="email" placeholder="Seu email..." required>
+            <button type="submit">Inscrever-se</button>
+        </form>
+        <p>Helton Cassoma.</p>
+        <p>&copy; 2025 - Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        // Função para carregar os textos do localStorage
+        function carregarTextos() {
+            const textos = JSON.parse(localStorage.getItem('textos')) || [];
+            const secaoTextos = document.getElementById('textos');
+
+            textos.forEach(texto => {
+                const artigo = document.createElement('article');
+                artigo.classList.add('texto');
+
+                artigo.innerHTML = `
+                    <h3>${texto.titulo}</h3>
+                    <p>${texto.conteudo}</p>
+                    <button class="adoro-btn" onclick="incrementarAdoro(${texto.id})">
+                        Adoro! <span id="adoro-count-${texto.id}">0</span>
+                    </button>
+                    <button class="unlike-btn" onclick="diminuirAdoro(${texto.id})">Unlike</button>
+                `;
+
+                secaoTextos.appendChild(artigo);
+            });
+        }
+
+        // Função para carregar contadores de "Adoro!" do localStorage
+        function carregarAdoros() {
+            const textos = JSON.parse(localStorage.getItem('textos')) || [];
+            textos.forEach((texto) => {
+                const count = localStorage.getItem(`adoro-${texto.id}`) || 0;
+                document.getElementById(`adoro-count-${texto.id}`).textContent = count;
+            });
+        }
+
+        // Função para incrementar o contador de "Adoro!"
+        function incrementarAdoro(id) {
+            const contador = document.getElementById(`adoro-count-${id}`);
+            let atual = parseInt(contador.textContent);
+            atual++;
+            contador.textContent = atual;
+
+            // Salva no localStorage
+            localStorage.setItem(`adoro-${id}`, atual);
+        }
+
+        // Função para diminuir o contador de "Adoro!"
+        function diminuirAdoro(id) {
+            const contador = document.getElementById(`adoro-count-${id}`);
+            let atual = parseInt(contador.textContent);
+            if (atual > 0) {
+                atual--;
+                contador.textContent = atual;
+
+                // Salva no localStorage
+                localStorage.setItem(`adoro-${id}`, atual);
+            }
+        }
+
+        // Carrega os textos e os contadores ao carregar a página
+        document.addEventListener("DOMContentLoaded", () => {
+            carregarTextos();
+            carregarAdoros();
+        });
+    </script>
+</body>
+</html>
