@@ -21,13 +21,7 @@
     <main>
         <section id="textos">
             <h2>Textos</h2>
-            <form id="form-texto">
-                <label for="titulo">Título:</label>
-                <input type="text" id="titulo" required>
-                <label for="conteudo">Conteúdo:</label>
-                <textarea id="conteudo" rows="4" required></textarea>
-                <button type="submit">Enviar</button>
-            </form>
+            <!-- Os artigos serão inseridos aqui pelo JavaScript -->
             <div id="textos-salvos"></div>
         </section>
     </main>
@@ -44,101 +38,30 @@
     </footer>
 
     <script>
-        // Função para carregar os textos salvos da API
+        // Função para carregar os textos a partir do arquivo JSON
         function carregarTextos() {
-            fetch("http://localhost:3000/textos")
+            fetch('textos.json')
                 .then(response => response.json())
                 .then(textos => {
-                    const divTextos = document.getElementById("textos-salvos");
-                    divTextos.innerHTML = '';
-                    textos.forEach((texto, index) => {
+                    const divTextos = document.getElementById('textos-salvos');
+                    divTextos.innerHTML = '';  // Limpa os textos existentes antes de carregar os novos
+                    textos.forEach((texto) => {
                         const artigo = document.createElement("article");
                         artigo.classList.add("texto");
-
                         artigo.innerHTML = `
                             <h3>${texto.titulo}</h3>
                             <p>${texto.conteudo}</p>
-                            <button class="adoro-btn" id="adoro-${texto.id}" onclick="incrementarAdoro(${texto.id})">
-                                Adoro! <span id="adoro-count-${texto.id}">${texto.adoro}</span>
-                            </button>
-                            <button class="unlike-btn" id="unlike-${texto.id}" onclick="diminuirAdoro(${texto.id})" disabled>Unlike</button>
                         `;
                         divTextos.appendChild(artigo);
                     });
                 })
-                .catch(err => console.error(err));
-        }
-
-        // Função para adicionar um novo texto
-        document.getElementById("form-texto").addEventListener("submit", function(event) {
-            event.preventDefault();
-
-            const titulo = document.getElementById("titulo").value;
-            const conteudo = document.getElementById("conteudo").value;
-
-            fetch("http://localhost:3000/textos", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ titulo, conteudo })
-            })
-            .then(response => response.json())
-            .then(() => {
-                document.getElementById("form-texto").reset();
-                carregarTextos();
-            })
-            .catch(err => console.error(err));
-        });
-
-        // Função para incrementar o "Adoro!" de um texto
-        function incrementarAdoro(id) {
-            const contador = document.getElementById(`adoro-count-${id}`);
-            let atual = parseInt(contador.textContent);
-            atual++;
-
-            fetch(`http://localhost:3000/textos/${id}/adoro`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ adoro: atual })
-            })
-            .then(response => response.json())
-            .then(() => {
-                contador.textContent = atual;
-                document.getElementById(`adoro-${id}`).disabled = true;
-                document.getElementById(`unlike-${id}`).disabled = false;
-            })
-            .catch(err => console.error(err));
-        }
-
-        // Função para diminuir o "Adoro!" de um texto
-        function diminuirAdoro(id) {
-            const contador = document.getElementById(`adoro-count-${id}`);
-            let atual = parseInt(contador.textContent);
-            if (atual > 0) {
-                atual--;
-
-                fetch(`http://localhost:3000/textos/${id}/adoro`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ adoro: atual })
-                })
-                .then(response => response.json())
-                .then(() => {
-                    contador.textContent = atual;
-                    document.getElementById(`unlike-${id}`).disabled = true;
-                    document.getElementById(`adoro-${id}`).disabled = false;
-                })
-                .catch(err => console.error(err));
-            }
+                .catch(err => {
+                    console.error('Erro ao carregar textos:', err);
+                });
         }
 
         // Carregar os textos quando a página for carregada
-        window.onload = carregarTextos;
+        document.addEventListener('DOMContentLoaded', carregarTextos);
     </script>
 </body>
 </html>
